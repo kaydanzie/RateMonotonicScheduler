@@ -1,8 +1,9 @@
 
 class Scheduler{
 	
-	public static void main(String[] args){
-		//thread.start()
-		//thread.join()
+	public static void main(String[] args) throws InterruptedException{
+
+		WorkThread wt = new WorkThread(true);
+
 	}
 }
