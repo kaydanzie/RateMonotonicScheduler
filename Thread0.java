@@ -1,9 +1,9 @@
 
-class WorkThread extends Thread{
+class Thread0 extends Thread{
 
 	public boolean mutex;
 
-	WorkThread(boolean mutex){
+	Thread0(boolean mutex){
 		this.mutex = mutex;
 		Thread t = new Thread(this);
 		t.start();
@@ -41,5 +41,7 @@ class WorkThread extends Thread{
     		}
     	}
     }
+
+
 
 }
