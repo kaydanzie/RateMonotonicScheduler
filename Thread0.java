@@ -1,25 +1,33 @@
 
 class Thread0 extends Thread{
 
-	public boolean mutex;
+	public Semaphore sem;
+	public int counter;
+	public boolean running;
 
-	Thread0(boolean mutex){
-		this.mutex = mutex;
-		Thread t = new Thread(this);
-		t.start();
-		synchronized(this){
-			try{
-				this.wait();
-			}
-			catch(Exception e){}
-		}
+	Thread0(Semaphore s){
+		this.sem = s;
+		counter = 0;
 	}
 
 
 	public void run(){
-		doWork();
-		synchronized(this){
-			this.notifyAll();
+		
+		while(true){
+
+			//wait to be woken by scheduler
+			try{this.sem.semWait();}
+			catch(Exception e){}
+			print(sem.value);
+			
+			running = true;
+			doWork();
+
+			//lock
+			counter++;
+			running = false;
+			//unlock
+
 		}
 	}
 
@@ -32,7 +40,6 @@ class Thread0 extends Thread{
     		}
     	}
 
-
     	int product = 1;
     	int[] cols = {0, 5, 1, 6, 2, 7, 3, 8, 4, 9};
     	for(int x=0; x<=9; x++){
@@ -42,6 +49,13 @@ class Thread0 extends Thread{
     	}
     }
 
+	public void start(){
+		Thread t = new Thread(new Thread0(this.sem));
+		t.start();
+	}
 
 
+    public void print(Object i){
+		System.out.println(i);
+	}
 }

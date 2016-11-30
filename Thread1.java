@@ -1,28 +1,22 @@
 
 class Thread1 extends Thread{
 
-	public boolean mutex;
+	public Semaphore sem;
 
-	Thread1(boolean mutex){
-		this.mutex = mutex;
-		Thread t = new Thread(this);
-		t.start();
-		synchronized(this){
-			try{
-				this.wait();
-			}
-			catch(Exception e){}
-		}
+	Thread1(Semaphore sem){
+
 	}
 
 
 	public void run(){
+		//sem.semWait();
 		for(int i=0; i<2; i++){
 			doWork();
 		}
 		synchronized(this){
 			this.notifyAll();
 		}
+		sem.signal();
 	}
 
 

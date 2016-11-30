@@ -5,23 +5,19 @@ class Semaphore{
 	
 	Semaphore(){
 		this.value = 0;
-		//list of waiting processes
 	}
 
-	public void signal(Semaphore s){
-		value++;
-		if(value <= 0){
-			//remove from list
-		}
+	public synchronized void signal(){
+		notifyAll();
+		this.value++;
 	}
 
 
-	public void wait(Semaphore s){
-		value--;
-		if(value <0){
-			//add to list
-			//wait
+	public synchronized void semWait() throws InterruptedException{
+		while(this.value<=0){
+			wait();
 		}
+		this.value--;
 	}
 
 
