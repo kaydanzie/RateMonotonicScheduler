@@ -4,8 +4,12 @@ class Scheduler extends Thread{
 	int count0= 0;
 	int count1= 0;
 	int count2= 0;
-	int count3=0;
-	int period = 0;
+	int count3= 0;
+	int overrun0= 0;
+	int overrun1= 0;
+	int overrun2= 0;
+	int overrun3= 0;
+	int period= 0;
 
 	
 	Thread0 t0;
@@ -21,7 +25,6 @@ class Scheduler extends Thread{
 	public static void main(String[] args){
 
 		Scheduler s = new Scheduler();
-		//s.t0.start();
 		s.start();
 
 	}
@@ -37,14 +40,22 @@ class Scheduler extends Thread{
 			catch(Exception e){}
 
 
-			if(period % 16 ==0){//all 4 threads run
+			if(period % 16 ==0){//t0, t1, t2, t3
+
 				t0.sem.signal();
-			}
-
-			else if(period % 4 == 0){
 
 			}
-			period += 10;
+			else if(period % 4 == 0){//t0, t1, t2
+
+			}
+			else if(period % 2 == 0){//t0, t1
+
+			}
+			else{//t0 only
+
+			}
+
+			period += 1;
 		}
 	}
 

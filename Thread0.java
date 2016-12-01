@@ -1,12 +1,15 @@
+import java.util.concurrent.*;
 
 class Thread0 extends Thread{
 
 	public Semaphore sem;
 	public int counter;
-	public boolean running;
+	public boolean running, flag;
+	public final ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
 
 	Thread0(Semaphore s){
 		this.sem = s;
+		running = false;
 		counter = 0;
 	}
 
@@ -16,12 +19,34 @@ class Thread0 extends Thread{
 		while(true){
 
 			//wait to be woken by scheduler
+			print("waiting");
 			try{this.sem.semWait();}
 			catch(Exception e){}
-			print(sem.value);
+			flag = false;
+
+			//start timer here
+			final Runnable sendBack = new Runnable() {
+                public void run() { 
+                	try{setFlag();}
+			 		catch(Exception e){} 
+			 	}
+            };
+            timer.schedule(sendBack, 10, TimeUnit.MILLISECONDS);
 			
+
+			// new Thread(new Runnable(){
+			// 	public void run(){
+			// 		try{setFlag();}
+			// 		catch(Exception e){}
+			// 	}
+			// }).start();
+
 			running = true;
-			doWork();
+			for(int i=0; i<1; i++){
+				if(flag) break;
+				doWork();
+			}
+			
 
 			//lock
 			counter++;
@@ -29,6 +54,12 @@ class Thread0 extends Thread{
 			//unlock
 
 		}
+	}
+
+
+	public void setFlag() throws InterruptedException{
+		//Thread.sleep(100);
+		flag = true;
 	}
 
 
