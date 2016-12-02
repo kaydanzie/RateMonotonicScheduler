@@ -4,7 +4,7 @@ class Thread0 extends Thread{
 
 	public MySemaphore sem;
 	public static int counter;
-	public static boolean running, flag;
+	public static boolean running;
 	public final ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
 	public Scheduler sched;
 
@@ -23,7 +23,6 @@ class Thread0 extends Thread{
 			//wait to be woken by scheduler
 			try{this.sem.semWait();}
 			catch(Exception e){}
-			flag = false;
 
 
 			//start timer here

@@ -11,11 +11,13 @@ class Scheduler extends Thread{
 	
 	Thread0 t0;
 	Thread1 t1;
+	Thread2 t2;
 
 
 	Scheduler(){
 		this.t0 = new Thread0(new MySemaphore(), this);
 		this.t1 = new Thread1(new MySemaphore(), this);
+		this.t2 = new Thread2(new MySemaphore(), this);
 	}
 
 
@@ -32,6 +34,7 @@ class Scheduler extends Thread{
 
 		t0.start();
 		t1.start();
+		t2.start();
 
 		//runs for 16 units, 10 times
 		while(period <= 160){
@@ -60,9 +63,18 @@ class Scheduler extends Thread{
 				}
 				else overrun1++;
 
+				//start thread2
+				if(!t2.running){
+					t2.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun2++;
+
 			}
 			
 			else if(period % 4 == 0){//t0, t1, t2
+				//start thread0
 				if(!t0.running){
 					t0.sem.signal();
 					try{this.schedSem.semWait();}
@@ -77,9 +89,18 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun1++;
+
+				//start thread2
+				if(!t2.running){
+					t2.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun2++;
 			}
 			
 			else if(period % 2 == 0){//t0, t1
+				//start thread0
 				if(!t0.running){
 					t0.sem.signal();
 					try{this.schedSem.semWait();}
@@ -97,6 +118,7 @@ class Scheduler extends Thread{
 			}
 			
 			else{//t0 only
+				//start thread0
 				if(!t0.running){
 					t0.sem.signal();
 					try{this.schedSem.semWait();}

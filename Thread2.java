@@ -1,6 +1,6 @@
 import java.util.concurrent.*;
 
-class Thread1 extends Thread{
+class Thread2 extends Thread{
 
     public MySemaphore sem;
     public static int counter;
@@ -8,7 +8,7 @@ class Thread1 extends Thread{
     public final ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
     public Scheduler sched;
 
-    Thread1(MySemaphore s, Scheduler sched){
+    Thread2(MySemaphore s, Scheduler sched){
         this.sched = sched;
         this.sem = s;
         running = false;
@@ -37,7 +37,7 @@ class Thread1 extends Thread{
 
             
             setRunning(true);
-            for(int i=0; i<2; i++){
+            for(int i=0; i<4; i++){
                 doWork();
             }
             
@@ -68,7 +68,7 @@ class Thread1 extends Thread{
 
 
     public void start(){
-        Thread t = new Thread(new Thread1(this.sem, this.sched));
+        Thread t = new Thread(new Thread2(this.sem, this.sched));
         t.start();
     }
 
