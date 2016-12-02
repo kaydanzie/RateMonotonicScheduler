@@ -1,30 +1,27 @@
 
 class Scheduler extends Thread{
 
-	int count0= 0;
-	int count1= 0;
-	int count2= 0;
-	int count3= 0;
 	int overrun0= 0;
 	int overrun1= 0;
 	int overrun2= 0;
 	int overrun3= 0;
 	int period= 0;
+	MySemaphore schedSem;
 
 	
 	Thread0 t0;
 	//Thread1 t1;
-	
 
 
 	Scheduler(){
-		this.t0 = new Thread0(new Semaphore());
+		this.t0 = new Thread0(new MySemaphore(), this);
 	}
 
 
 	public static void main(String[] args){
 
 		Scheduler s = new Scheduler();
+		s.schedSem = new MySemaphore();
 		s.start();
 
 	}
@@ -34,37 +31,59 @@ class Scheduler extends Thread{
 
 		t0.start();
 
+		//runs for 16 units, 10 times
 		while(period <= 160){
 
-			try{Thread.sleep(1000);}
+			try{Thread.sleep(20);}
 			catch(Exception e){}
 
+			//all 4 threads run every 16 units
+			if(period % 16 ==0){//t0, t1, t2, t3
 
-			if(period % 4 ==0){//t0, t1, t2, t3
-
-				print("scheduler t0 running: "+t0.getRunning());
-
-				if(!t0.getRunning()){
-					print("sending signal");
+				if(!t0.running){
 					t0.sem.signal();
-					count0 = t0.getCounter();//can do get once at the end?
+
+					//wait doesn't work, use sleep at beginning of loop instead
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
 				}
 				else overrun0++;
-				
 
 			}
+			
 			else if(period % 4 == 0){//t0, t1, t2
-
+				if(!t0.running){
+					t0.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun0++;
 			}
+			
 			else if(period % 2 == 0){//t0, t1
-
+				if(!t0.running){
+					t0.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun0++;
 			}
+			
 			else{//t0 only
-
+				if(!t0.running){
+					t0.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun0++;
 			}
-			print(period);
 			period += 1;
 		}
+
+		//write results to file, t0.counter
+		//terminate program immediately after 160 periods
+		
+		System.exit(0);	
 	}
 
 

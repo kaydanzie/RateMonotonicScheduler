@@ -1,9 +1,9 @@
 
-class Semaphore{
+class MySemaphore{
 
 	public int value;
 	
-	Semaphore(){
+	MySemaphore(){
 		this.value = 0;
 	}
 

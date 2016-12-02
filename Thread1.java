@@ -1,9 +1,9 @@
 
 class Thread1 extends Thread{
 
-	public Semaphore sem;
+	public MySemaphore sem;
 
-	Thread1(Semaphore sem){
+	Thread1(MySemaphore sem){
 
 	}
 

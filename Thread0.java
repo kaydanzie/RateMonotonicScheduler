@@ -2,12 +2,14 @@ import java.util.concurrent.*;
 
 class Thread0 extends Thread{
 
-	public Semaphore sem;
-	private static int counter;
-	private static boolean running, flag;
+	public MySemaphore sem;
+	public static int counter;
+	public static boolean running, flag;
 	public final ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
+	public Scheduler sched;
 
-	Thread0(Semaphore s){
+	Thread0(MySemaphore s, Scheduler sched){
+		this.sched = sched;
 		this.sem = s;
 		running = false;
 		counter = 0;
@@ -26,45 +28,27 @@ class Thread0 extends Thread{
 
 			//start timer here
 			final Runnable sendBack = new Runnable() {
-                public void run() { 
-                	try{setFlag();}
-			 		catch(Exception e){}
-			 		print(running + " running");
+                public void run() {
+                	//signaling doesn't work
+                	//scheduler using sleep
+                	sched.schedSem.signal();
 			 	}
             };
-            timer.schedule(sendBack, 1, TimeUnit.MILLISECONDS);
-			
-
-			// new Thread(new Runnable(){
-			// 	public void run(){
-			// 		try{setFlag();}
-			// 		catch(Exception e){}
-			// 	}
-			// }).start();
+            timer.schedule(sendBack, 100, TimeUnit.MILLISECONDS);
 
             
-			//this.running = true;
 			this.setRunning(true);
-			for(int i=0; i<1000000; i++){
-				if(flag) break;
+			for(int i=0; i<1; i++){
 				doWork();
 			}
 			
-
 			//lock
-			this.counter++;
-			//this.running = false;
-			this.setRunning(false);
+			setCounter(1);
+			setRunning(false);
 			//unlock
 
 		}
 	}
-
-
-	public void setFlag() throws InterruptedException{
-		flag = true;
-	}
-
 
     public void doWork(){
     	int[][] workMatrix = new int[10][10];
@@ -83,14 +67,10 @@ class Thread0 extends Thread{
     	}
     }
 
+
 	public void start(){
-		Thread t = new Thread(new Thread0(this.sem));
+		Thread t = new Thread(new Thread0(this.sem, this.sched));
 		t.start();
-	}
-
-
-	public boolean getRunning(){
-		return this.running;
 	}
 
 
@@ -98,9 +78,8 @@ class Thread0 extends Thread{
 		this.running = newValue;
 	}
 
-
-	public int getCounter(){
-		return this.counter;
+	public void setCounter(int x){
+		this.counter += x;
 	}
 
 
