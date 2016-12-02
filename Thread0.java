@@ -3,8 +3,8 @@ import java.util.concurrent.*;
 class Thread0 extends Thread{
 
 	public Semaphore sem;
-	public int counter;
-	public boolean running, flag;
+	private static int counter;
+	private static boolean running, flag;
 	public final ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
 
 	Thread0(Semaphore s){
@@ -19,19 +19,20 @@ class Thread0 extends Thread{
 		while(true){
 
 			//wait to be woken by scheduler
-			print("waiting");
 			try{this.sem.semWait();}
 			catch(Exception e){}
 			flag = false;
+
 
 			//start timer here
 			final Runnable sendBack = new Runnable() {
                 public void run() { 
                 	try{setFlag();}
-			 		catch(Exception e){} 
+			 		catch(Exception e){}
+			 		print(running + " running");
 			 	}
             };
-            timer.schedule(sendBack, 10, TimeUnit.MILLISECONDS);
+            timer.schedule(sendBack, 1, TimeUnit.MILLISECONDS);
 			
 
 			// new Thread(new Runnable(){
@@ -41,16 +42,19 @@ class Thread0 extends Thread{
 			// 	}
 			// }).start();
 
-			running = true;
-			for(int i=0; i<1; i++){
+            
+			//this.running = true;
+			this.setRunning(true);
+			for(int i=0; i<1000000; i++){
 				if(flag) break;
 				doWork();
 			}
 			
 
 			//lock
-			counter++;
-			running = false;
+			this.counter++;
+			//this.running = false;
+			this.setRunning(false);
 			//unlock
 
 		}
@@ -58,7 +62,6 @@ class Thread0 extends Thread{
 
 
 	public void setFlag() throws InterruptedException{
-		//Thread.sleep(100);
 		flag = true;
 	}
 
@@ -83,6 +86,21 @@ class Thread0 extends Thread{
 	public void start(){
 		Thread t = new Thread(new Thread0(this.sem));
 		t.start();
+	}
+
+
+	public boolean getRunning(){
+		return this.running;
+	}
+
+
+	public void setRunning(boolean newValue){
+		this.running = newValue;
+	}
+
+
+	public int getCounter(){
+		return this.counter;
 	}
 
 
