@@ -10,11 +10,12 @@ class Scheduler extends Thread{
 
 	
 	Thread0 t0;
-	//Thread1 t1;
+	Thread1 t1;
 
 
 	Scheduler(){
 		this.t0 = new Thread0(new MySemaphore(), this);
+		this.t1 = new Thread1(new MySemaphore(), this);
 	}
 
 
@@ -30,6 +31,7 @@ class Scheduler extends Thread{
 	public void run(){
 
 		t0.start();
+		t1.start();
 
 		//runs for 16 units, 10 times
 		while(period <= 160){
@@ -40,6 +42,7 @@ class Scheduler extends Thread{
 			//all 4 threads run every 16 units
 			if(period % 16 ==0){//t0, t1, t2, t3
 
+				//start thread0
 				if(!t0.running){
 					t0.sem.signal();
 
@@ -48,6 +51,14 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun0++;
+
+				//start thread1
+				if(!t1.running){
+					t1.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun1++;
 
 			}
 			
@@ -58,6 +69,14 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun0++;
+
+				//start thread1
+				if(!t1.running){
+					t1.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun1++;
 			}
 			
 			else if(period % 2 == 0){//t0, t1
@@ -67,6 +86,14 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun0++;
+
+				//start thread1
+				if(!t1.running){
+					t1.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun1++;
 			}
 			
 			else{//t0 only
@@ -76,13 +103,13 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun0++;
+
 			}
 			period += 1;
 		}
 
 		//write results to file, t0.counter
 		//terminate program immediately after 160 periods
-		
 		System.exit(0);	
 	}
 
