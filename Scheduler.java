@@ -40,9 +40,17 @@ class Scheduler extends Thread{
 			catch(Exception e){}
 
 
-			if(period % 16 ==0){//t0, t1, t2, t3
+			if(period % 4 ==0){//t0, t1, t2, t3
 
-				t0.sem.signal();
+				print("scheduler t0 running: "+t0.getRunning());
+
+				if(!t0.getRunning()){
+					print("sending signal");
+					t0.sem.signal();
+					count0 = t0.getCounter();//can do get once at the end?
+				}
+				else overrun0++;
+				
 
 			}
 			else if(period % 4 == 0){//t0, t1, t2
@@ -54,7 +62,7 @@ class Scheduler extends Thread{
 			else{//t0 only
 
 			}
-
+			print(period);
 			period += 1;
 		}
 	}
