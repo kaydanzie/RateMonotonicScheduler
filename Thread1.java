@@ -15,7 +15,6 @@ class Thread1 extends Thread{
         counter = 0;
     }
 
-
     public void run(){
         
         while(true){
@@ -26,6 +25,7 @@ class Thread1 extends Thread{
 
 
             //start timer here
+            //runs sendBack runnable after 10 MS
             final Runnable sendBack = new Runnable() {
                 public void run() {
                     //signaling doesn't work
@@ -33,7 +33,7 @@ class Thread1 extends Thread{
                     sched.schedSem.signal();
                 }
             };
-            timer.schedule(sendBack, 100, TimeUnit.MILLISECONDS);
+            timer.schedule(sendBack, 10, TimeUnit.MILLISECONDS);
 
             
             setRunning(true);
@@ -72,7 +72,7 @@ class Thread1 extends Thread{
         t.start();
     }
 
-
+    //set running to false if doWork doesn't finish within 10 MS timer
     public void setRunning(boolean newValue){
         this.running = newValue;
     }

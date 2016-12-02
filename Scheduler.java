@@ -1,24 +1,20 @@
 import java.io.*;
 
-
 class Scheduler extends Thread{
 
+	//keep track of each thread's overruns
 	int overrun0= 0;
 	int overrun1= 0;
 	int overrun2= 0;
 	int overrun3= 0;
 	int period= 1;
-	//BufferedWriter out;
 	MySemaphore schedSem;
 	FileWriter out;
-	boolean done;
-
 	
 	Thread0 t0;
 	Thread1 t1;
 	Thread2 t2;
 	Thread3 t3;
-
 
 	Scheduler(){
 		this.t0 = new Thread0(new MySemaphore(), this);
@@ -43,13 +39,14 @@ class Scheduler extends Thread{
 		t2.start();
 		t3.start();
 
-		//runs for 16 units, 10 times
+		//scheduler runs for 16 units, 10 times
 		while(period <= 160){
 
 			try{Thread.sleep(20);}
 			catch(Exception e){}
 
 			//all 4 threads run every 16 units
+			//shortest period (t0) has highest priority
 			if(period % 16 ==0){//t0, t1, t2, t3
 
 				//start thread0
@@ -145,19 +142,20 @@ class Scheduler extends Thread{
 			period += 1;
 		}
 
-		//write results to file, t0.counter
-		//terminate program immediately after 160 periods
-		try{ out = new FileWriter("out.txt");}
+		//write results to file
+		try{ 
+			out = new FileWriter("out.txt");
+			writeOutput();
+		}
 		catch(Exception e){}
-		writeOutput();
 		
 		
+		//terminate program/threads immediately after 160 periods
 		System.exit(0);	
 	}
 
 
-	public void writeOutput(){
-		try{
+	public void writeOutput() throws IOException{
 			out.write("# of times Thread0 ran: "+t0.counter+"\n");
 			out.write("# of times Thread1 ran: "+t1.counter+"\n");
 			out.write("# of times Thread2 ran: "+t2.counter+"\n");
@@ -167,8 +165,6 @@ class Scheduler extends Thread{
 			out.write("Thread2 overruns: "+overrun2+"\n");
 			out.write("Thread3 overruns: "+overrun3);
 			out.close();
-		}
-		catch(Exception e){}
 	}
 
 

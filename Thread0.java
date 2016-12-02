@@ -15,17 +15,17 @@ class Thread0 extends Thread{
 		counter = 0;
 	}
 
-
 	public void run(){
 		
 		while(true){
 
-			//wait to be woken by scheduler
+			//waiting to be woken by scheduler
 			try{this.sem.semWait();}
 			catch(Exception e){}
 
 
 			//start timer here
+			//runs sendBack runnable after 10 MS
 			final Runnable sendBack = new Runnable() {
                 public void run() {
                 	//signaling doesn't work
@@ -33,8 +33,7 @@ class Thread0 extends Thread{
                 	sched.schedSem.signal();
 			 	}
             };
-            timer.schedule(sendBack, 100, TimeUnit.MILLISECONDS);
-
+            timer.schedule(sendBack, 10, TimeUnit.MILLISECONDS);
             
 			setRunning(true);
 			for(int i=0; i<1; i++){
@@ -72,7 +71,7 @@ class Thread0 extends Thread{
 		t.start();
 	}
 
-
+	//set running to false if doWork doesn't finish within 10 MS timer
 	public void setRunning(boolean newValue){
 		this.running = newValue;
 	}
