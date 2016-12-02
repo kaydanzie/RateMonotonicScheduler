@@ -36,7 +36,7 @@ class Thread0 extends Thread{
             timer.schedule(sendBack, 100, TimeUnit.MILLISECONDS);
 
             
-			this.setRunning(true);
+			setRunning(true);
 			for(int i=0; i<1; i++){
 				doWork();
 			}

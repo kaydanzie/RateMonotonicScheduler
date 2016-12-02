@@ -12,12 +12,14 @@ class Scheduler extends Thread{
 	Thread0 t0;
 	Thread1 t1;
 	Thread2 t2;
+	Thread3 t3;
 
 
 	Scheduler(){
 		this.t0 = new Thread0(new MySemaphore(), this);
 		this.t1 = new Thread1(new MySemaphore(), this);
 		this.t2 = new Thread2(new MySemaphore(), this);
+		this.t3 = new Thread3(new MySemaphore(), this);
 	}
 
 
@@ -35,6 +37,7 @@ class Scheduler extends Thread{
 		t0.start();
 		t1.start();
 		t2.start();
+		t3.start();
 
 		//runs for 16 units, 10 times
 		while(period <= 160){
@@ -70,6 +73,14 @@ class Scheduler extends Thread{
 					catch(Exception e){}
 				}
 				else overrun2++;
+
+				//start thread3
+				if(!t3.running){
+					t3.sem.signal();
+					try{this.schedSem.semWait();}
+					catch(Exception e){}
+				}
+				else overrun3++;
 
 			}
 			
