@@ -1,3 +1,5 @@
+import java.io.*;
+
 
 class Scheduler extends Thread{
 
@@ -5,8 +7,11 @@ class Scheduler extends Thread{
 	int overrun1= 0;
 	int overrun2= 0;
 	int overrun3= 0;
-	int period= 0;
+	int period= 1;
+	//BufferedWriter out;
 	MySemaphore schedSem;
+	FileWriter out;
+	boolean done;
 
 	
 	Thread0 t0;
@@ -24,11 +29,10 @@ class Scheduler extends Thread{
 
 
 	public static void main(String[] args){
-
+		
 		Scheduler s = new Scheduler();
 		s.schedSem = new MySemaphore();
 		s.start();
-
 	}
 
 
@@ -143,7 +147,28 @@ class Scheduler extends Thread{
 
 		//write results to file, t0.counter
 		//terminate program immediately after 160 periods
+		try{ out = new FileWriter("out.txt");}
+		catch(Exception e){}
+		writeOutput();
+		
+		
 		System.exit(0);	
+	}
+
+
+	public void writeOutput(){
+		try{
+			out.write("# of times Thread0 ran: "+t0.counter+"\n");
+			out.write("# of times Thread1 ran: "+t1.counter+"\n");
+			out.write("# of times Thread2 ran: "+t2.counter+"\n");
+			out.write("# of times Thread3 ran: "+t3.counter+"\n");
+			out.write("Thread0 overruns: "+overrun0+"\n");
+			out.write("Thread1 overruns: "+overrun1+"\n");
+			out.write("Thread2 overruns: "+overrun2+"\n");
+			out.write("Thread3 overruns: "+overrun3);
+			out.close();
+		}
+		catch(Exception e){}
 	}
 
 
